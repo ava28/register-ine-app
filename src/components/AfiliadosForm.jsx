@@ -7,7 +7,7 @@ import Navbar from './Navbar'
 
 export default function AfiliadosForm() {
   const [formData, setFormData] = useState({
-    credencialId: '',
+    claveElector: '',
     nombre: '',
     telefono: '',
     seccion: '',
@@ -18,7 +18,6 @@ export default function AfiliadosForm() {
   const [ubicacionCargada, setUbicacionCargada] = useState(false)
 
   useEffect(() => {
-    // Obtener datos del usuario autenticado
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         const snapshot = await get(ref(database, 'usuarios/' + user.uid))
@@ -32,7 +31,6 @@ export default function AfiliadosForm() {
       }
     })
 
-    // Obtener ubicación del dispositivo
     navigator.geolocation.getCurrentPosition(
       async (position) => {
         const lat = position.coords.latitude
@@ -110,7 +108,7 @@ export default function AfiliadosForm() {
 
       if (data) {
         const afiliadoExistente = Object.values(data).find(
-          (a) => a.credencialId === formData.credencialId
+          (a) => a.claveElector === formData.claveElector
         )
 
         if (afiliadoExistente) {
@@ -125,7 +123,7 @@ export default function AfiliadosForm() {
           })
 
           setFormData({
-            credencialId: '',
+            claveElector: '',
             nombre: '',
             telefono: '',
             seccion: '',
@@ -150,7 +148,7 @@ export default function AfiliadosForm() {
       })
 
       setFormData({
-        credencialId: '',
+        claveElector: '',
         nombre: '',
         telefono: '',
         seccion: '',
@@ -173,19 +171,22 @@ export default function AfiliadosForm() {
             Registrar Afiliado
           </h2>
           <form className="space-y-4" onSubmit={handleSubmit}>
-            {['credencialId', 'nombre', 'telefono', 'seccion'].map((field) => (
-              <div key={field}>
-                <label className="block text-sm font-medium text-gray-700 capitalize">
-                  {field}
-                </label>
+            {[
+              { name: 'claveElector', label: 'Clave de Elector' },
+              { name: 'nombre', label: 'Nombre' },
+              { name: 'telefono', label: 'Teléfono' },
+              { name: 'seccion', label: 'Sección' },
+            ].map(({ name, label }) => (
+              <div key={name}>
+                <label className="block text-sm font-medium text-gray-700">{label}</label>
                 <input
                   type="text"
-                  name={field}
-                  value={formData[field]}
+                  name={name}
+                  value={formData[name]}
                   onChange={handleChange}
                   required
                   className="mt-1 block w-full px-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
-                  placeholder={`Escribe el ${field}`}
+                  placeholder={`Escribe el ${label.toLowerCase()}`}
                 />
               </div>
             ))}

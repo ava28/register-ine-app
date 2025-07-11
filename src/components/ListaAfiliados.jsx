@@ -97,7 +97,7 @@ export default function ListaAfiliados() {
         <table className="min-w-full border border-gray-300 rounded-lg overflow-hidden text-sm">
           <thead className="bg-gray-100">
             <tr>
-              <th className="px-4 py-2 border-b text-left">Credencial ID</th>
+              <th className="px-4 py-2 border-b text-left">Clave de Elector</th>
               <th className="px-4 py-2 border-b text-left">Nombre</th>
               <th className="px-4 py-2 border-b text-left">Teléfono</th>
               <th className="px-4 py-2 border-b text-left">Sección</th>
@@ -111,7 +111,7 @@ export default function ListaAfiliados() {
           <tbody>
             {afiliadosFiltrados.map((a) => (
               <tr key={a.id} className="hover:bg-gray-50">
-                <td className="px-4 py-2 border-b">{a.credencialId}</td>
+                <td className="px-4 py-2 border-b">{a.claveElector }</td>
                 <td className="px-4 py-2 border-b">{a.nombre}</td>
                 <td className="px-4 py-2 border-b">{a.telefono}</td>
                 <td className="px-4 py-2 border-b">{a.seccion}</td>
