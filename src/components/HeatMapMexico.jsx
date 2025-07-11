@@ -15,18 +15,29 @@ const normalizeName = (name) => {
 
 const getColor = (value, max) => {
   if (value === 0) return '#c8c8c8'; // gris para estados sin afiliados
-  if (max === 0) return '#ffffff';   // por seguridad
+  if (max === 0) return '#ffffff';   // fallback
 
   const ratio = value / max;
 
-  // Color rojo: rgb(198, 0, 0)
-  // Color verde: rgb(39, 165, 3)
-  const r = Math.floor(198 + (39 - 198) * ratio);
-  const g = Math.floor(0 + (165 - 0) * ratio);
-  const b = Math.floor(0 + (3 - 0) * ratio);
+  let r, g, b;
+
+  if (ratio <= 0.5) {
+    // Rojo a Naranja
+    const t = ratio / 0.5; // Normaliza de 0–0.5 a 0–1
+    r = Math.round(204 + (235 - 204) * t);
+    g = Math.round(1 + (174 - 1) * t);
+    b = Math.round(1 + (0 - 1) * t);
+  } else {
+    // Naranja a Verde
+    const t = (ratio - 0.5) / 0.5; // Normaliza de 0.5–1 a 0–1
+    r = Math.round(235 + (44 - 235) * t);
+    g = Math.round(174 + (195 - 174) * t);
+    b = Math.round(0 + (0 - 0) * t);
+  }
 
   return `rgb(${r},${g},${b})`;
 };
+
 
 export default function HeatMapMexico() {
   const [countsByState, setCountsByState] = useState({});
