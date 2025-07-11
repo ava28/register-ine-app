@@ -11,35 +11,50 @@ export default function Usuarios() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    // Validar rol admin
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (!user) {
+        console.warn('🔒 Usuario no autenticado, redirigiendo a login...')
         navigate('/login')
         return
       }
-      const rolSnap = await get(child(ref(database), `usuarios/${user.uid}/rol`))
-      const rol = rolSnap.val()
-      if (rol !== 'admin') {
-        alert('No tienes permiso para ver esta página')
-        navigate('/home')
-      } else {
-        // Cargar usuarios
+
+      try {
+        const rolSnap = await get(child(ref(database), `usuarios/${user.uid}/rol`))
+        const rol = rolSnap.val()
+
+        console.log('👤 Rol del usuario:', rol)
+
+        if (rol !== 'admin') {
+          alert('No tienes permiso para ver esta página')
+          navigate('/home')
+          return
+        }
+
+        // ✅ Usuario es administrador, cargar usuarios
         const usuariosRef = ref(database, 'usuarios')
         onValue(usuariosRef, (snapshot) => {
           const data = snapshot.val()
+          console.log('📥 Datos de usuarios recibidos:', data)
+
           if (data) {
             const lista = Object.entries(data).map(([uid, userData]) => ({
               uid,
               ...userData,
             }))
             setUsuarios(lista)
+            console.log('✅ Lista de usuarios cargada:', lista)
           } else {
             setUsuarios([])
+            console.warn('⚠️ No hay usuarios en la base de datos.')
           }
           setLoading(false)
         })
+      } catch (error) {
+        console.error('❌ Error al obtener el rol:', error)
+        navigate('/login')
       }
     })
+
     return () => unsubscribe()
   }, [navigate])
 
@@ -61,16 +76,17 @@ export default function Usuarios() {
             </tr>
           </thead>
           <tbody>
-            {usuarios.map(({ uid, email, nombre, apellido, telefono, rol }) => (
-              <tr key={uid} className="hover:bg-gray-50">
-                <td className="px-4 py-2 border-b">{email}</td>
-                <td className="px-4 py-2 border-b">{nombre}</td>
-                <td className="px-4 py-2 border-b">{apellido}</td>
-                <td className="px-4 py-2 border-b">{telefono}</td>
-                <td className="px-4 py-2 border-b capitalize">{rol}</td>
-              </tr>
-            ))}
-            {usuarios.length === 0 && (
+            {usuarios.length > 0 ? (
+              usuarios.map(({ uid, email, nombre, apellido, telefono, rol }) => (
+                <tr key={uid} className="hover:bg-gray-50">
+                  <td className="px-4 py-2 border-b">{email}</td>
+                  <td className="px-4 py-2 border-b">{nombre}</td>
+                  <td className="px-4 py-2 border-b">{apellido}</td>
+                  <td className="px-4 py-2 border-b">{telefono}</td>
+                  <td className="px-4 py-2 border-b capitalize">{rol}</td>
+                </tr>
+              ))
+            ) : (
               <tr>
                 <td colSpan="6" className="text-center py-4">
                   No hay usuarios registrados
