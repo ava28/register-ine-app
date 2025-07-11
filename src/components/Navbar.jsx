@@ -60,11 +60,10 @@ export default function Navbar() {
         <div className="hidden md:flex gap-6 items-center">
           <Link to="/home" className="text-gray-700 hover:text-gray-600 hover:font-bold">Inicio</Link>
           <Link to="/registrarafiliacion" className="text-gray-700 hover:text-gray-600 hover:font-bold">Registrar Afiliados</Link>
-          <Link to="/afiliados" className="text-gray-700 hover:text-gray-600 hover:font-bold">Afiliados</Link>
           {userRole === 'admin' && (
             <>
-              <Link to="/recuentoafiliados" className="text-gray-700 hover:text-gray-600 hover:font-bold">
-                Recuento Afiliados
+              <Link to="/afiliados" className="text-gray-700 hover:text-gray-600 hover:font-bold">
+                Afiliados
               </Link>
               <Link to="/registrar" className="text-gray-700 hover:text-gray-600 hover:font-bold">Registrar Usuario</Link>
               <Link to="/usuarios" className="text-gray-700 hover:text-gray-600 hover:font-bold">Usuarios</Link>
@@ -87,8 +86,8 @@ export default function Navbar() {
           <Link to="/registrarafiliacion" className="block text-gray-700 hover:text-gray-600 hover:font-bold">Registrar Afiliados</Link>
           {userRole === 'admin' && (
             <>
-            <Link to="/recuentoafiliados" className="text-gray-700 hover:text-gray-600 hover:font-bold">
-                Recuento Afiliados
+            <Link to="/afiliados" className="text-gray-700 hover:text-gray-600 hover:font-bold">
+                Afiliados
               </Link>
               <Link to="/registrar" className="block text-gray-700 hover:text-gray-600 hover:font-bold">Registrar Usuario</Link>
               <Link to="/usuarios" className="block text-gray-700 hover:text-gray-600 hover:font-bold">Usuarios</Link>

@@ -1,24 +1,42 @@
-// src/components/RootRedirect.jsx
-import React, { useEffect, useState } from 'react'
-import { auth } from '../credenciales'
-import { onAuthStateChanged } from 'firebase/auth'
-import { Navigate } from 'react-router-dom'
+// src/components/RequireAuth.jsx
+import React, { useEffect, useState } from 'react';
+import { Navigate } from 'react-router-dom';
+import { auth, database } from '../credenciales';
+import { ref, onValue } from 'firebase/database';
 
-export default function RootRedirect() {
-  const [checking, setChecking] = useState(true)
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
+export default function RequireAuth({ children }) {
+  const [loading, setLoading] = useState(true);
+  const [authorized, setAuthorized] = useState(false);
+  const [redirectTo, setRedirectTo] = useState(null);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setIsAuthenticated(!!user)
-      setChecking(false)
-    })
-    return unsubscribe
-  }, [])
+    const user = auth.currentUser;
 
-  if (checking) {
-    return <p>Cargando...</p>
-  }
+    if (!user) {
+      setRedirectTo('/login');
+      setLoading(false);
+      return;
+    }
 
-  return isAuthenticated ? <Navigate to="/home" replace /> : <Navigate to="/login" replace />
+    const userRef = ref(database, `usuarios/${user.uid}`);
+    onValue(userRef, (snap) => {
+      const userData = snap.val();
+      if (!userData) {
+        setRedirectTo('/login');
+      } else if (userData.rol === 'admin') {
+        setAuthorized(true);
+      } else if (userData.rol === 'agente') {
+        setRedirectTo('/registrarafiliacion');
+      } else {
+        setRedirectTo('/login'); // Fallback
+      }
+      setLoading(false);
+    });
+  }, []);
+
+  if (loading) return null;
+
+  if (redirectTo) return <Navigate to={redirectTo} replace />;
+
+  return children;
 }

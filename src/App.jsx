@@ -11,7 +11,8 @@ import Home from './components/Home'
 import RegistrarUsuario from './components/From'
 import Usuarios from './components/Usuarios'
 import AfiliadosForm from './components/AfiliadosForm'
-import Afiliados from './components/Afiliados'
+import AfiliadosAdmin from './components/AfiliadosAdmin'
+import ListaAfiliados from './components/ListaAfiliados'
 import RecuentoAfiliados from './components/RecuentoAfiliados'
 
 export default function App() {
@@ -30,6 +31,7 @@ export default function App() {
             </RequireAuth>
           }
         />
+
         <Route
           path="/registrarafiliacion"
           element={
@@ -39,11 +41,11 @@ export default function App() {
           }
         />
         <Route
-          path="/afiliados"
+          path="/afiliadosadmin"
           element={
-            <RequireAuth>
-              <Afiliados />
-            </RequireAuth>
+            <PrivateAdminRoute>
+              <AfiliadosAdmin />
+            </PrivateAdminRoute>
           }
         />
 
@@ -64,14 +66,15 @@ export default function App() {
             </PrivateAdminRoute>
           }
         />
-        <Route
-          path="/recuentoafiliados"
-          element={
-            <PrivateAdminRoute>
-              <RecuentoAfiliados />
-            </PrivateAdminRoute>
-          }
-        />
+        <Route path="/afiliados" element={
+          <PrivateAdminRoute>
+            <AfiliadosAdmin />
+          </PrivateAdminRoute>
+        }>
+
+          <Route path="lista" element={<ListaAfiliados />} />
+          <Route path="recuento" element={<RecuentoAfiliados />} />
+        </Route>
 
         {/* Ruta comodín para cualquier URL no reconocida */}
         <Route path="*" element={<Navigate to="/" replace />} />
